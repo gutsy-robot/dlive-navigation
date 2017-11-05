@@ -2,7 +2,7 @@
 <launch>
     <!-- Replace with pcan stuff -->
     
-    <!--group ns="base_controller">
+      <!--group ns="base_controller">
       <param name="odom_frame_id" type="string" value="odom"/>
       <param name="base_frame_id" type="string" value="base_link"/>
     </group>
@@ -45,7 +45,7 @@
         <!--param name="cmd_vel/abtr_priority" value="10"/-->
     </group>
     <!-- Run the ROS package stereo_image_proc for image rectification-->
-  <!--group ns="/stereo_camera" >
+  <group ns="/stereo_camera" >
       <node pkg="nodelet" type="nodelet" name="stereo_nodelet"  args="manager"/>
     <!-- HACK: the fps parameter on camera1394stereo_node doesn't work for my camera!?!?
        Throttle camera images -->
@@ -57,7 +57,7 @@
         
         <param name="queue_size" type="int" value="10"/>
         <param name="rate" type="double" value="20"/>
-    </node>
+    </node-->
   
     <node pkg="stereo_image_proc" type="stereo_image_proc" name="stereo_image_proc">
       <remap from="left/image_raw"    to="left/image_raw_throttle"/>
@@ -65,7 +65,7 @@
       <remap from="right/image_raw"   to="right/image_raw_throttle"/>
       <remap from="right/camera_info" to="right/camera_info_throttle"/>
       <param name="disparity_range" value="128"/>
-    </node-->
+    </node>
     
 
         <!-- Create point cloud for the planner -->
@@ -91,7 +91,7 @@
   </group>
   
   <!-- Visual Odometry -->
-  <node pkg="rtabmap_ros" type="stereo_odometry" name="stereo_odometry" output="screen">
+  <!--node pkg="rtabmap_ros" type="stereo_odometry" name="stereo_odometry" output="screen">
       <remap from="left/image_rect"       to="/stereo_camera/left/image_rect"/>
       <remap from="right/image_rect"      to="/stereo_camera/right/image_rect"/>
       <remap from="left/camera_info"      to="/stereo_camera/left/camera_info_throttle"/>
@@ -108,28 +108,28 @@
       
       <param name="GFTT/MaxCorners" type="string" value="500"/>
       <param name="GFTT/MinDistance" type="string" value="5"/>
-  </node>
+  </node-->
 
   <!--REPLACE WITH RTABMAP LAUNCH FILE-->
 
-  <group ns="rtabmap">   
+  <!--group ns="rtabmap">   
       <!-- Visual SLAM: args: "delete_db_on_start" and "udebug" -->
-      <node name="rtabmap" pkg="rtabmap_ros" type="rtabmap" output="screen" args="--delete_db_on_start">
-         <param name="frame_id" type="string" value="base_footprint"/>
+      <!--node name="rtabmap" pkg="rtabmap_ros" type="rtabmap" output="screen" args="--delete_db_on_start">
+         <param name="frame_id" type="string" value="base_link"/>
          <param name="subscribe_stereo" type="bool" value="true"/>
          <param name="subscribe_depth" type="bool" value="false"/>
 
          <remap from="left/image_rect" to="/stereo_camera/left/image_rect_color"/>
          <remap from="right/image_rect" to="/stereo_camera/right/image_rect"/>
-         <remap from="left/camera_info" to="/stereo_camera/left/camera_info_throttle"/>
-         <remap from="right/camera_info" to="/stereo_camera/right/camera_info_throttle"/>
+         <remap from="left/camera_info" to="/stereo_camera/left/camera_info"/>
+         <remap from="right/camera_info" to="/stereo_camera/right/camera_info"/>
 
          <remap from="odom" to="/odometry"/>
 
          <param name="queue_size" type="int" value="30"/>
 
          <!-- RTAB-Map's parameters -->
-         <param name="Rtabmap/TimeThr" type="string" value="700"/>
+         <!--param name="Rtabmap/TimeThr" type="string" value="700"/>
          <param name="Rtabmap/DetectionRate" type="string" value="1"/>
          
          <param name="Kp/WordsPerImage" type="string" value="200"/>
@@ -144,9 +144,12 @@
          <param name="LccReextract/Activated" type="string" value="true"/>
          <param name="LccReextract/MaxWords" type="string" value="500"/>
       </node>
-   </group>
+   </group-->
   
+  <!--WHEN PLAYING FROM BAG FILES-->
+  <node pkg="rosbag" type="play" name="rosbagplay" args="$(find dlive-nav)/bag/bag_file.bag --clock -d 5" required="true"/>
 
+<!--NON-ESSENTIAL NODES FROM THE LAUNCH FILE-->
     
     <!--node name="az3_abtr" pkg="azimut_tools" type="azimut_abtr_priority_node">
         <remap from="abtr_cmd_eta" to="/base_controller/cmd_eta"/>
