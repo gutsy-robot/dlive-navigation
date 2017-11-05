@@ -9,7 +9,7 @@
     <remap from="/base_controller/odom" to="/dlive/az3_odom"/-->
 
 	<!-- AZIMUT 3 bringup: launch motors and TF -->
-	<include file="$(find dlive-navigation)/launch/car_bringup.launch"/>
+	<!--include file="$(find dlive-nav)/launch/car_bringup.launch"/-->
 	
 	<!--node name="joy" pkg="joy" type="joy_node"/>
     <group ns="teleop">
@@ -21,14 +21,14 @@
 	<!-- ROS navigation stack move_base -->
     <group ns="planner">
         <remap from="openni_points" to="/planner_cloud"/>
-        <!--remap from="base_scan" to="/base_scan"/-->
+       
         <remap from="map" to="/rtabmap/proj_map"/>
         <remap from="move_base_simple/goal" to="/planner_goal"/>
         
         <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
     	  <rosparam file="$(find dlive-nav)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
      	  <rosparam file="$(find dlive-nav)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
-    	  <rosparam file="$(find dlive-nav)/config/local_costmap_params_3d.yaml" command="load" />
+    	  <rosparam file="$(find dlive-nav)/config/local_costmap_3d_params.yaml" command="load" />
     	  <rosparam file="$(find dlive-nav)/config/global_costmap_params.yaml" command="load" ns="global_costmap"/>
     	  <rosparam file="$(find dlive-nav)/config/teb_local_planner_params.yaml" command="load" />
         <param name="base_global_planner" value="global_planner/GlobalPlanner" />
@@ -42,8 +42,8 @@
         <param name="clearing_rotation_allowed" value="false" />
    		</node>
    		
-        <!--param name="cmd_vel/abtr_priority" value="10"/-->
-    </group>
+        
+    </group >
     <!-- Run the ROS package stereo_image_proc for image rectification-->
   <group ns="/stereo_camera" >
       <node pkg="nodelet" type="nodelet" name="stereo_nodelet"  args="manager"/>
@@ -60,10 +60,10 @@
     </node-->
   
     <node pkg="stereo_image_proc" type="stereo_image_proc" name="stereo_image_proc">
-      <remap from="left/image_raw"    to="left/image_raw_throttle"/>
-      <remap from="left/camera_info"  to="left/camera_info_throttle"/>
-      <remap from="right/image_raw"   to="right/image_raw_throttle"/>
-      <remap from="right/camera_info" to="right/camera_info_throttle"/>
+      <remap from="left/image_raw"    to="left/image_raw_color"/>
+      <remap from="left/camera_info"  to="left/camera_info"/>
+      <remap from="right/image_raw"   to="right/image_raw_color"/>
+      <remap from="right/camera_info" to="right/camera_info"/>
       <param name="disparity_range" value="128"/>
     </node>
     
@@ -71,7 +71,7 @@
         <!-- Create point cloud for the planner -->
     <node pkg="nodelet" type="nodelet" name="disparity2cloud" args="load rtabmap_ros/point_cloud_xyz stereo_nodelet">
       <remap from="disparity/image"       to="disparity"/>
-      <remap from="disparity/camera_info" to="right/camera_info_throttle"/>
+      <remap from="disparity/camera_info" to="right/camera_info"/>
       <remap from="cloud"                 to="cloudXYZ"/>
       
       <param name="voxel_size" type="double" value="0.05"/>
@@ -82,73 +82,73 @@
           <remap from="cloud" to="cloudXYZ"/>
       <remap from="obstacles" to="/planner_cloud"/>
 
-      <param name="frame_id" type="string" value="base_footprint"/>   
+      <param name="frame_id" type="string" value="zed_initial_frame"/>   
       <param name="map_frame_id" type="string" value="map"/>
       <param name="wait_for_transform" type="bool" value="true"/>
-      <param name="min_cluster_size" type="int" value="20"/>
-      <param name="max_obstacles_height" type="double" value="0.0"/>
+      <param name="Grid/MinClusterSize" type="int" value="20"/>
+      <param name="Grid/MaxObstacleHeight" type="double" value="0.0"/>
       </node>
   </group>
   
   <!-- Visual Odometry -->
-  <!--node pkg="rtabmap_ros" type="stereo_odometry" name="stereo_odometry" output="screen">
-      <remap from="left/image_rect"       to="/stereo_camera/left/image_rect"/>
-      <remap from="right/image_rect"      to="/stereo_camera/right/image_rect"/>
-      <remap from="left/camera_info"      to="/stereo_camera/left/camera_info_throttle"/>
-      <remap from="right/camera_info"     to="/stereo_camera/right/camera_info_throttle"/>
-      <remap from="odom"                  to="/odometry"/>
+  <node pkg="rtabmap_ros" type="stereo_odometry" name="stereo_odometry" output="screen">
+      <remap from="left/image_rect"       to="stereo_camera/left/image_rect_color"/>
+      <remap from="right/image_rect"      to="stereo_camera/right/image_rect_color"/>
+      <remap from="left/camera_info"      to="stereo_camera/left/camera_info"/>
+      <remap from="right/camera_info"     to="stereo_camera/right/camera_info"/>
+      <remap from="odom"                  to="odom"/>
 
-      <param name="frame_id" type="string" value="base_footprint"/>
+      <param name="frame_id" type="string" value="zed_initial_frame"/>
       <param name="odom_frame_id" type="string" value="odom"/>
 
-      <param name="Odom/InlierDistance" type="string" value="0.1"/>
-      <param name="Odom/MinInliers" type="string" value="10"/>
-      <param name="Odom/RoiRatios" type="string" value="0.03 0.03 0.04 0.04"/>
-      <param name="Odom/MaxDepth" type="string" value="10"/>
-      
-      <param name="GFTT/MaxCorners" type="string" value="500"/>
-      <param name="GFTT/MinDistance" type="string" value="5"/>
-  </node-->
+      <param name="Vis/InlierDistance" type="string" value="0.1"/>
+      <param name="Vis/MinInliers" type="string" value="10"/>
+      <param name="Vis/RoiRatios" type="string" value="0.03 0.03 0.04 0.04"/>
+      <param name="Vis/MaxDepth" type="string" value="10"/>
+        
+      <param name="Vis/MaxCorners" type="string" value="500"/>
+      <param name="Vis/MinDistance" type="string" value="5"/>
+  </node>
 
   <!--REPLACE WITH RTABMAP LAUNCH FILE-->
 
-  <!--group ns="rtabmap">   
+  <group ns="rtabmap">   
       <!-- Visual SLAM: args: "delete_db_on_start" and "udebug" -->
-      <!--node name="rtabmap" pkg="rtabmap_ros" type="rtabmap" output="screen" args="--delete_db_on_start">
-         <param name="frame_id" type="string" value="base_link"/>
+      <node name="rtabmap" pkg="rtabmap_ros" type="rtabmap" output="screen" args="--delete_db_on_start">
+         <param name="frame_id" type="string" value="zed_initial_frame"/>
          <param name="subscribe_stereo" type="bool" value="true"/>
          <param name="subscribe_depth" type="bool" value="false"/>
 
          <remap from="left/image_rect" to="/stereo_camera/left/image_rect_color"/>
-         <remap from="right/image_rect" to="/stereo_camera/right/image_rect"/>
+         <remap from="right/image_rect" to="/stereo_camera/right/image_rect_color"/>
          <remap from="left/camera_info" to="/stereo_camera/left/camera_info"/>
          <remap from="right/camera_info" to="/stereo_camera/right/camera_info"/>
 
-         <remap from="odom" to="/odometry"/>
+         <remap from="odom" to="/odom"/>
 
          <param name="queue_size" type="int" value="30"/>
 
-         <!-- RTAB-Map's parameters -->
-         <!--param name="Rtabmap/TimeThr" type="string" value="700"/>
+       
+         <param name="Rtabmap/TimeThr" type="string" value="700"/>
          <param name="Rtabmap/DetectionRate" type="string" value="1"/>
          
-         <param name="Kp/WordsPerImage" type="string" value="200"/>
+         <param name="Kp/MaxFeatures" type="string" value="200"/>
          <param name="Kp/RoiRatios" type="string" value="0.03 0.03 0.04 0.04"/>
 
          <param name="SURF/HessianThreshold" type="string" value="1000"/>
 
-         <param name="LccBow/MaxDepth" type="string" value="5"/>
-         <param name="LccBow/MinInliers" type="string" value="10"/>
-         <param name="LccBow/InlierDistance" type="string" value="0.05"/>
-
-         <param name="LccReextract/Activated" type="string" value="true"/>
-         <param name="LccReextract/MaxWords" type="string" value="500"/>
+         <param name="Vis/MaxDepth" type="string" value="5"/>
+         <param name="Vis/MinInliers" type="string" value="10"/>
+         <param name="Vis/InlierDistance" type="string" value="0.05"/>
+         <param name="approx_sync" type="bool" value="true"/>
+         <param name="rtabmapviz" type="bool" value="true"/>
+         <param name="Vis/Activated" type="string" value="true"/>
+         <param name="Vis/MaxWords" type="string" value="500"/>
       </node>
-   </group-->
+   </group>
   
   <!--WHEN PLAYING FROM BAG FILES-->
-  <node pkg="rosbag" type="play" name="rosbagplay" args="$(find dlive-nav)/bag/bag_file.bag --clock -d 5" required="true"/>
-
+  
 <!--NON-ESSENTIAL NODES FROM THE LAUNCH FILE-->
     
     <!--node name="az3_abtr" pkg="azimut_tools" type="azimut_abtr_priority_node">

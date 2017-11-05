@@ -2,14 +2,14 @@
 
 <launch>
   <!--launching zed wrapper node-->
-  <include file="$(find zed_ros_wrapper_master)/launch/zed.launch"/>
+  <include file="$(find zed_wrapper)/launch/zed.launch"/>
 
 
   <!-- ODOMETRY SOURCE HERE: ROS_LOCALISATION-->
-  <include file="$(find car_localization_test)/launch/car_localization_dual.launch"/>
+  <!--include file="$(find car_localization_test)/launch/car_localization_dual.launch"/-->
 
   <!--Transform state publisher -->
-  <node pkg="dlive_tf" type="tf_broadcast" name="tf_broadcast" output="screen">
+  <node pkg="dlive_tf" type="dlive_tf_node" name="tf_broadcast" output="screen">
     <!--param name="transform_configuration_param" value="param_value" /-->
   </node>
 </launch>
