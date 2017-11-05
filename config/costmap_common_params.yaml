@@ -1,0 +1,10 @@
+footprint: [[ 1.5,  -0.5], [1.5,  0.5], [-1.0, -0.5], [ -1.0, 0.5]]
+footprint_padding: 0.05
+#robot_radius: 0.38
+#robot_radius: ir_of_robot
+inflation_layer:
+  inflation_radius: 2.0 # 2xfootprint, it helps to keep the global planned path farther from obstacles
+transform_tolerance: 2
+
+
+
