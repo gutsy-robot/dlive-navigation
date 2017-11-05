@@ -1,19 +1,15 @@
 <!--for launching default sensor nodes on the driverless car IITD.-->
 
 <launch>
-  <!--replace this by zed_wrapper, IMU and GPS talker nodes-->
-  <node pkg="sensor_node_pkg" type="sensor_node_type" name="sensor_node_name" output="screen">
-    <param name="sensor_param" value="param_value" />
-  </node>
+  <!--launching zed wrapper node-->
+  <include file="$(find zed_ros_wrapper_master)/launch/zed.launch"/>
 
 
-  <!-- ODOMETRY SOURCE HERE, ADD ROS_LOCALISATION OR ZED ODOM-->
-  <node pkg="odom_node_pkg" type="odom_node_type" name="odom_node" output="screen">
-    <param name="odom_param" value="param_value" />
-  </node>
+  <!-- ODOMETRY SOURCE HERE: ROS_LOCALISATION-->
+  <include file="$(find car_localization_test)/launch/car_localization_dual.launch"/>
 
   <!--Transform state publisher -->
-  <node pkg="transform_configuration_pkg" type="transform_configuration_type" name="transform_configuration_name" output="screen">
-    <param name="transform_configuration_param" value="param_value" />
+  <node pkg="dlive_tf" type="tf_broadcast" name="tf_broadcast" output="screen">
+    <!--param name="transform_configuration_param" value="param_value" /-->
   </node>
 </launch>
