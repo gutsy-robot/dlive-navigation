@@ -9,7 +9,7 @@
     <remap from="/base_controller/odom" to="/dlive/az3_odom"/-->
 
 	<!-- AZIMUT 3 bringup: launch motors and TF -->
-	<!--include file="$(find dlive-nav)/launch/car_bringup.launch"/-->
+	<include file="$(find dlive-nav)/launch/car_bringup.launch"/>
 	
 	<!--node name="joy" pkg="joy" type="joy_node"/>
     <group ns="teleop">
