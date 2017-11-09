@@ -86,7 +86,7 @@
           <remap from="cloud" to="cloudXYZ"/>
       <remap from="obstacles" to="/planner_cloud"/>
 
-      <param name="frame_id" type="string" value="zed_initial_frame"/>   
+      <param name="frame_id" type="string" value="zed_center"/>   
       <param name="map_frame_id" type="string" value="map"/>
       <param name="wait_for_transform" type="bool" value="true"/>
       <param name="Grid/MinClusterSize" type="int" value="20"/>
@@ -119,7 +119,7 @@
   <group ns="rtabmap">   
       <!-- Visual SLAM: args: "delete_db_on_start" and "udebug" -->
       <node name="rtabmap" pkg="rtabmap_ros" type="rtabmap" output="screen" args="--delete_db_on_start">
-         <param name="frame_id" type="string" value="zed_initial_frame"/>
+         <param name="frame_id" type="string" value="zed_center"/>
          <param name="subscribe_stereo" type="bool" value="true"/>
          <param name="subscribe_depth" type="bool" value="false"/>
 
