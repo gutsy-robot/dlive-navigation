@@ -8,3 +8,7 @@ We are using the rtabmap_ros(http://wiki.ros.org/rtabmap_ros/Tutorials/StereoOut
 The point clouds created by rtabmap are used by the ROS Navigation Stack for calculating a collision-free path.
 
 In the future, we also plan to include a custom costmap layer for Segnet(http://mi.eng.cam.ac.uk/projects/segnet/) which we use for road detection.
+
+To run ROS Navigation on the car, do a:
+    
+      roslaunch dlive-navigation car_stereo_nav.launch
