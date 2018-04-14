@@ -11,4 +11,4 @@ In the future, we also plan to include a custom costmap layer for Segnet(http://
 
 To run ROS Navigation on the car, do a:
     
-      roslaunch dlive-navigation car_stereo_nav.launch
+      roslaunch dlive-nav car_stereo_nav.launch
